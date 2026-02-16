@@ -19,7 +19,7 @@ export default class WalletGradient {
   static hdSegwitP2SHWallet: string[] = ['#007AFF', '#0040FF'];
   static hdSegwitBech32Wallet: string[] = ['#6CD9FC', '#44BEE5'];
   static segwitBech32Wallet: string[] = ['#6CD9FC', '#44BEE5'];
-  static watchOnlyWallet: string[] = ['#FC4D5D', '#E63A4A'];
+  static watchOnlyWallet: string[] = ['#474646', '#282828'];
   static legacyWallet: string[] = ['#37E8C0', '#15BE98'];
   static taprootWallet: string[] = ['#4DA337', '#326D28'];
   static hdLegacyP2PKHWallet: string[] = ['#FD7478', '#E73B40'];

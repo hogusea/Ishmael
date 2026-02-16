@@ -37,6 +37,8 @@ interface NewWalletPanelProps {
   onPress: () => void;
 }
 
+const ISHMAEL_IMPORT_BUTTON_COLOR = '#FC4D5D';
+
 const nStyles = StyleSheet.create({
   container: {
     borderRadius: 10,
@@ -122,7 +124,7 @@ const NewWalletPanel: React.FC<NewWalletPanelProps> = ({ onPress }) => {
       >
         <Text style={[nStyles.addAWAllet, { color: colors.foregroundColor }]}>{loc.wallets.list_create_a_wallet}</Text>
         <Text style={[nStyles.addLine, { color: colors.alternativeTextColor }]}>{loc.wallets.list_create_a_wallet_text}</Text>
-        <View style={[nStyles.button, { backgroundColor: WalletGradient.watchOnlyWallet[0] }]}>
+        <View style={[nStyles.button, { backgroundColor: ISHMAEL_IMPORT_BUTTON_COLOR }]}>
           <Text style={nStyles.buttonText}>{loc.wallets.list_create_a_button}</Text>
         </View>
       </Animated.View>
