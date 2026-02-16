@@ -54,13 +54,13 @@ const nStyles = StyleSheet.create({
   },
   button: {
     marginTop: 12,
-    backgroundColor: '#007AFF',
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 8,
   },
   buttonText: {
     fontWeight: '500',
+    color: '#FFFFFF',
   },
 });
 
@@ -122,8 +122,8 @@ const NewWalletPanel: React.FC<NewWalletPanelProps> = ({ onPress }) => {
       >
         <Text style={[nStyles.addAWAllet, { color: colors.foregroundColor }]}>{loc.wallets.list_create_a_wallet}</Text>
         <Text style={[nStyles.addLine, { color: colors.alternativeTextColor }]}>{loc.wallets.list_create_a_wallet_text}</Text>
-        <View style={nStyles.button}>
-          <Text style={[nStyles.buttonText, { color: colors.brandingColor }]}>{loc.wallets.list_create_a_button}</Text>
+        <View style={[nStyles.button, { backgroundColor: WalletGradient.watchOnlyWallet[0] }]}>
+          <Text style={nStyles.buttonText}>{loc.wallets.list_create_a_button}</Text>
         </View>
       </Animated.View>
     </Pressable>

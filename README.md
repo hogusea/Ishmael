@@ -1,24 +1,28 @@
-# Ishmael - A Bitcoin & Lightning Wallet
+# Ishmael - BTCmobick Watch-Only Wallet
 
-[![GitHub tag](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/hogusea/mobick-ishmael/master/package.json&query=$.version&label=Version)](https://github.com/hogusea/mobick-ishmael)
+[![GitHub tag](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/hogusea/Ishmael/master/package.json&query=$.version&label=Version)](https://github.com/hogusea/Ishmael)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-![](https://img.shields.io/github/license/hogusea/mobick-ishmael.svg)
+![](https://img.shields.io/github/license/hogusea/Ishmael.svg)
 
-Thin Bitcoin Wallet.
-Built with React Native and Electrum.
+Ishmael is a BTCmobick-focused watch-only wallet fork.
+It is optimized for PSBT signing flow and external signer workflows.
 
-[![Repository](https://img.shields.io/badge/GitHub-hogusea%2Fmobick--ishmael-181717?logo=github)](https://github.com/hogusea/mobick-ishmael)
+[![Repository](https://img.shields.io/badge/GitHub-hogusea%2FIshmael-181717?logo=github)](https://github.com/hogusea/Ishmael)
 
 Website: [github.com/hogusea](https://github.com/hogusea)
 
-Community: [telegram group](https://github.com/hogusea)
+## Recommended Companion
 
-* Private keys never leave your device
-* Lightning Network supported
-* SegWit-first. Replace-By-Fee support
-* Encryption. Plausible deniability
-* And many more features
+Use Ishmael together with **Mobick Logbook** for the intended offline signing flow.
 
+Mobick Logbook is a SeedSigner fork:
+https://github.com/hogusea/seedsigner
+
+## BTCmobick Defaults
+
+* Electrum: `wallet.mobick.info:40009`
+* Explorer: `https://blockchain.mobick.info/`
+* Watch-only import and PSBT broadcast flow enabled by default
 
 <img src="https://i.imgur.com/hHYJnMj.png" width="100%">
 
@@ -36,8 +40,8 @@ node --version && npm --version
 * In your console:
 
 ```
-git clone https://github.com/hogusea/mobick-ishmael.git
-cd mobick-ishmael
+git clone https://github.com/hogusea/Ishmael.git
+cd Ishmael
 npm install
 ```
 
@@ -49,7 +53,7 @@ You will now need to either connect an Android device to your computer or run an
 
 1. Download and run Android Studio
 2. Click on "Open an existing Android Studio Project"
-3. Open `build.gradle` file under `mobick-ishmael/android/` folder
+3. Open `build.gradle` file under `Ishmael/android/` folder
 4. Android Studio will take some time to set things up. Once everything is set up, go to `Tools` -> `AVD Manager`.
     * 📝 This option [may take some time to appear in the menu](https://stackoverflow.com/questions/47173708/why-avd-manager-options-are-not-showing-in-android-studio) if you're opening the project in a freshly-installed version of Android Studio.
 5. Click on "Create Virtual Device..." and go through the steps to create a virtual device
@@ -70,7 +74,7 @@ npx pod-install
 npm start
 ```
 
-In another terminal window within the `mobick-ishmael` folder:
+In another terminal window within the `Ishmael` folder:
 ```
 npx react-native run-ios
 ```
@@ -99,7 +103,7 @@ MIT
 
 ## WANT TO CONTRIBUTE?
 
-Grab an issue from [the backlog](https://github.com/hogusea/mobick-ishmael/issues), try to start or submit a PR.
+Grab an issue from [the backlog](https://github.com/hogusea/Ishmael/issues), try to start or submit a PR.
 
 ## Translations
 
