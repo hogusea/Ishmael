@@ -24,7 +24,14 @@ https://github.com/hogusea/seedsigner
 * Explorer: `https://blockchain.mobick.info/`
 * Watch-only import and PSBT broadcast flow enabled by default
 
-<img src="https://i.imgur.com/hHYJnMj.png" width="100%">
+## Android Screenshots
+
+<p align="center">
+  <img src="assets/readme/screen-wallets.png" width="24%" alt="Wallets screen">
+  <img src="assets/readme/screen-settings.png" width="24%" alt="Settings screen">
+  <img src="assets/readme/screen-about.png" width="24%" alt="About screen">
+  <img src="assets/readme/screen-donate.png" width="24%" alt="Developer donation screen">
+</p>
 
 
 ## BUILD & RUN IT
