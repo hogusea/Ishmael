@@ -15,6 +15,20 @@ export const NOTIFICATIONS_NO_AND_DONT_ASK_FLAG = 'NOTIFICATIONS_NO_AND_DONT_ASK
 let alreadyConfigured = false;
 let baseURI = groundControlUri;
 
+const getPushNotificationMethod = <T extends (...args: any[]) => any>(name: string): T | undefined => {
+  const maybeMethod = (PushNotification as unknown as Record<string, unknown>)?.[name];
+  if (typeof maybeMethod !== 'function') return undefined;
+  return maybeMethod as T;
+};
+
+const safeDeviceCapabilityCheck = (fn: unknown): boolean => {
+  try {
+    return typeof fn === 'function' ? Boolean((fn as () => boolean)()) : false;
+  } catch {
+    return false;
+  }
+};
+
 type TPushToken = {
   token: string;
   os: string; // its actually ('ios' | 'android'), but types for the lib are a bit more generic...
@@ -212,8 +226,11 @@ export const majorTomToGroundControl = async (addresses: string[], hashes: strin
  */
 export const checkPermissions = async () => {
   try {
+    const checkPermissionsMethod = getPushNotificationMethod<(cb: (result: any) => void) => void>('checkPermissions');
+    if (!checkPermissionsMethod) return {};
+
     return new Promise(function (resolve) {
-      PushNotification.checkPermissions((result: any) => {
+      checkPermissionsMethod((result: any) => {
         resolve(result);
       });
     });
@@ -252,9 +269,9 @@ export const setLevels = async (levelAll: boolean) => {
 
     if (!levelAll) {
       console.debug('Disabling notifications as user opted out...');
-      PushNotification.removeAllDeliveredNotifications();
-      PushNotification.setApplicationIconBadgeNumber(0);
-      PushNotification.cancelAllLocalNotifications();
+      getPushNotificationMethod<() => void>('removeAllDeliveredNotifications')?.();
+      getPushNotificationMethod<(badges: number) => void>('setApplicationIconBadgeNumber')?.(0);
+      getPushNotificationMethod<() => void>('cancelAllLocalNotifications')?.();
       await AsyncStorage.setItem(NOTIFICATIONS_NO_AND_DONT_ASK_FLAG, 'true');
       console.debug('Notifications disabled successfully');
     } else {
@@ -388,7 +405,13 @@ export const configureNotifications = async (onProcessNotifications?: () => void
           return resolve(true);
         }
 
-        PushNotification.configure({
+        const configurePush = getPushNotificationMethod<(options: Record<string, any>) => void>('configure');
+        if (!configurePush) {
+          console.debug('configureNotifications: PushNotification.configure is unavailable');
+          return resolve(false);
+        }
+
+        configurePush({
           onRegister: handleRegistration,
           onNotification: handleNotification,
           onRegistrationError: (error: any) => {
@@ -424,7 +447,8 @@ export const isGroundControlUriValid = async (uri: string) => {
   }
 };
 
-export const isNotificationsCapable = hasGmsSync() || hasHmsSync() || Platform.OS !== 'android';
+export const isNotificationsCapable =
+  Platform.OS !== 'android' || safeDeviceCapabilityCheck(hasGmsSync) || safeDeviceCapabilityCheck(hasHmsSync);
 
 export const getPushToken = async (): Promise<TPushToken> => {
   try {
@@ -524,8 +548,12 @@ export const clearStoredNotifications = async () => {
 
 export const getDeliveredNotifications: () => Promise<Record<string, any>[]> = () => {
   try {
+    const getDeliveredNotificationsMethod =
+      getPushNotificationMethod<(cb: (notifications: Record<string, any>[]) => void) => void>('getDeliveredNotifications');
+    if (!getDeliveredNotificationsMethod) return Promise.resolve([]);
+
     return new Promise(resolve => {
-      PushNotification.getDeliveredNotifications((notifications: Record<string, any>[]) => resolve(notifications));
+      getDeliveredNotificationsMethod((notifications: Record<string, any>[]) => resolve(notifications));
     });
   } catch (error) {
     console.error('Error getting delivered notifications:', error);
@@ -534,15 +562,15 @@ export const getDeliveredNotifications: () => Promise<Record<string, any>[]> = (
 };
 
 export const removeDeliveredNotifications = (identifiers = []) => {
-  PushNotification.removeDeliveredNotifications(identifiers);
+  getPushNotificationMethod<(ids: string[]) => void>('removeDeliveredNotifications')?.(identifiers);
 };
 
 export const setApplicationIconBadgeNumber = (badges: number) => {
-  PushNotification.setApplicationIconBadgeNumber(badges);
+  getPushNotificationMethod<(count: number) => void>('setApplicationIconBadgeNumber')?.(badges);
 };
 
 export const removeAllDeliveredNotifications = () => {
-  PushNotification.removeAllDeliveredNotifications();
+  getPushNotificationMethod<() => void>('removeAllDeliveredNotifications')?.();
 };
 
 export const getDefaultUri = () => {
@@ -657,7 +685,7 @@ export const initializeNotifications = async (onProcessNotifications?: () => voi
       console.debug('Notifications require user action to enable');
     }
   } catch (error) {
-    console.error('Failed to initialize notifications:', error);
+    console.warn('Failed to initialize notifications:', error);
     baseURI = groundControlUri;
     await AsyncStorage.setItem(GROUNDCONTROL_BASE_URI, groundControlUri).catch(err => console.error('Failed to reset URI:', err));
   }

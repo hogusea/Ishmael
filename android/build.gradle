@@ -13,6 +13,8 @@ buildscript {
         ndkVersion = "27.1.12297006"
         kotlin_version = '2.0.21'
         kotlinVersion = '2.0.21'
+        // Avoid third-party Gradle scripts shelling out to `node` during configuration.
+        REACT_NATIVE_NODE_MODULES_DIR = new File(rootDir, "../node_modules/react-native").absolutePath
     }
     repositories {
         google()

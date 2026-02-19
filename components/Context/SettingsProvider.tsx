@@ -14,7 +14,14 @@ import { getIsHandOffUseEnabled, setIsHandOffUseEnabled } from '../HandOffCompon
 import { useStorage } from '../../hooks/context/useStorage';
 import { BitcoinUnit } from '../../models/bitcoinUnits';
 import { TotalWalletsBalanceKey, TotalWalletsBalancePreferredUnit } from '../TotalWalletsBalance';
-import { BLOCK_EXPLORERS, getBlockExplorerUrl, saveBlockExplorer, BlockExplorer, normalizeUrl } from '../../models/blockExplorer';
+import {
+  BLOCK_EXPLORERS,
+  getBlockExplorerUrl,
+  saveBlockExplorer,
+  BlockExplorer,
+  normalizeUrl,
+  sanitizeBlockExplorerUrl,
+} from '../../models/blockExplorer';
 import * as BlueElectrum from '../../blue_modules/BlueElectrum';
 import { isBalanceDisplayAllowed, setBalanceDisplayAllowed } from '../../hooks/useWidgetCommunication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -190,8 +197,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = React.m
           setTotalBalancePreferredUnit(preferredUnit);
         }),
         getBlockExplorerUrl().then(url => {
-          const predefinedExplorer = Object.values(BLOCK_EXPLORERS).find(explorer => normalizeUrl(explorer.url) === normalizeUrl(url));
-          setSelectedBlockExplorer(predefinedExplorer ?? ({ key: 'custom', name: 'Custom', url } as BlockExplorer));
+          const sanitizedUrl = sanitizeBlockExplorerUrl(url);
+          const predefinedExplorer = Object.values(BLOCK_EXPLORERS).find(
+            explorer => normalizeUrl(explorer.url) === normalizeUrl(sanitizedUrl),
+          );
+          setSelectedBlockExplorer(predefinedExplorer ?? ({ key: 'custom', name: 'Custom', url: sanitizedUrl } as BlockExplorer));
         }),
       ];
 
@@ -326,9 +336,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = React.m
 
   const setBlockExplorerStorage = useCallback(async (explorer: BlockExplorer): Promise<boolean> => {
     try {
-      const success = await saveBlockExplorer(explorer.url);
+      const sanitizedExplorer: BlockExplorer = {
+        ...explorer,
+        url: sanitizeBlockExplorerUrl(explorer.url),
+      };
+      const success = await saveBlockExplorer(sanitizedExplorer.url);
       if (success) {
-        setSelectedBlockExplorer(explorer);
+        setSelectedBlockExplorer(sanitizedExplorer);
       }
       return success;
     } catch (e) {

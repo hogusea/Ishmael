@@ -249,7 +249,7 @@ const UnlockWith: React.FC = () => {
         <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <View style={styles.contentContainer}>
             <View style={styles.logoContainer}>
-              <Image source={require('../img/icon.png')} style={styles.logoImage} resizeMode="contain" />
+              <Image source={require('../img/ishmael-logo.png')} style={styles.logoImage} resizeMode="contain" />
             </View>
             <View style={styles.biometricRow}>{renderUnlockOptions()}</View>
           </View>

@@ -1,6 +1,6 @@
 # 개인정보처리방침 (Ishmael Wallet)
 
-시행일: 2026-02-19
+시행일: 2026-02-20
 
 Ishmael Wallet(이하 "앱")은 사용자의 개인정보를 최소한으로 처리하며, 본 방침은 앱 사용 시 처리되는 정보와 목적을 설명합니다.
 
@@ -17,6 +17,7 @@ Ishmael Wallet(이하 "앱")은 사용자의 개인정보를 최소한으로 처
 ### 3) 푸시 알림 사용 시 처리 정보 (선택)
 - 사용자가 알림을 활성화한 경우, 푸시 토큰(token), OS 정보, 앱 버전, 언어 정보와 함께 알림 제공에 필요한 주소/해시/txid가 알림 서버로 전송될 수 있습니다.
 - 기본 알림 서버: `https://groundcontrol.mobick.info`
+- 사용자가 알림을 비활성화했거나, 기기/OS 환경에서 알림 권한이 거부된 경우 해당 정보 전송은 수행되지 않습니다.
 
 ### 4) 오류 진단 정보 (Do Not Track 비활성 시)
 - 앱 안정성 개선을 위해 Bugsnag를 통해 오류/충돌 로그가 전송될 수 있습니다.
@@ -36,6 +37,11 @@ Ishmael Wallet(이하 "앱")은 사용자의 개인정보를 최소한으로 처
 - 사용자가 직접 설정한 Electrum/Lightning/기타 외부 서버
 
 각 외부 서비스의 정보 처리는 해당 사업자의 정책이 적용될 수 있습니다.
+
+참고 링크:
+- Bugsnag Privacy: `https://www.bugsnag.com/privacy/`
+- Firebase Cloud Messaging: `https://firebase.google.com/support/privacy`
+- Apple Push Notification service: `https://www.apple.com/legal/privacy/data/en/apple-push-notification-service/`
 
 ## 4. 보관 기간 및 파기
 - 기기 내 데이터는 사용자가 삭제하거나 앱을 제거할 때까지 보관됩니다.
@@ -68,3 +74,6 @@ Ishmael Wallet(이하 "앱")은 사용자의 개인정보를 최소한으로 처
 - GitHub: `https://github.com/hogusea`
 - Issues: `https://github.com/hogusea/Ishmael/issues`
 
+## 11. 개인정보처리방침 URL
+- GitHub 문서: `https://github.com/hogusea/Ishmael/blob/master/PRIVACY_POLICY.md`
+- 원문(Play Console 등록 권장): `https://raw.githubusercontent.com/hogusea/Ishmael/master/PRIVACY_POLICY.md`

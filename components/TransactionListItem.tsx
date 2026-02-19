@@ -26,6 +26,7 @@ import ToolTipMenu from './TooltipMenu';
 import { CommonToolTipActions } from '../typings/CommonToolTipActions';
 import { pop } from '../NavigationService';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { sanitizeBlockExplorerUrl } from '../models/blockExplorer';
 
 const styles = StyleSheet.create({
   dateLine: {
@@ -321,15 +322,13 @@ export const TransactionListItem: React.FC<TransactionListItemProps> = memo(
     const handleOnCopyTransactionID = useCallback(() => Clipboard.setString(item.hash), [item.hash]);
     const handleOnCopyNote = useCallback(() => Clipboard.setString(noteForCopy ?? ''), [noteForCopy]);
     const handleOnViewOnBlockExplorer = useCallback(() => {
-      const url = `${selectedBlockExplorer.url}/tx/${item.hash}`;
-      Linking.canOpenURL(url).then(supported => {
-        if (supported) {
-          Linking.openURL(url);
-        }
-      });
+      const explorerBase = sanitizeBlockExplorerUrl(selectedBlockExplorer.url);
+      const url = `${explorerBase}/tx/${item.hash}`;
+      Linking.openURL(url).catch(() => {});
     }, [item.hash, selectedBlockExplorer]);
     const handleCopyOpenInBlockExplorerPress = useCallback(() => {
-      Clipboard.setString(`${selectedBlockExplorer.url}/tx/${item.hash}`);
+      const explorerBase = sanitizeBlockExplorerUrl(selectedBlockExplorer.url);
+      Clipboard.setString(`${explorerBase}/tx/${item.hash}`);
     }, [item.hash, selectedBlockExplorer]);
 
     const onToolTipPress = useCallback(

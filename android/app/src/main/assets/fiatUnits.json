@@ -212,7 +212,7 @@
     "KRW": {
         "endPointKey": "KRW",
         "locale": "ko-KR",
-        "source": "CoinGecko",
+        "source": "Mobick",
         "symbol": "₩",
         "country": "South Korea (South Korean Won)"
     },

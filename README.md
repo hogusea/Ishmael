@@ -11,6 +11,11 @@ It is optimized for PSBT signing flow and external signer workflows.
 
 Website: [github.com/hogusea](https://github.com/hogusea)
 
+## Privacy Policy
+
+* Repository document: [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md)
+* Google Play Console URL (recommended): `https://raw.githubusercontent.com/hogusea/Ishmael/master/PRIVACY_POLICY.md`
+
 ## Recommended Companion
 
 Use Ishmael together with **Mobick Logbook** for the intended offline signing flow.
@@ -22,6 +27,7 @@ https://github.com/hogusea/seedsigner
 
 * Electrum: `wallet.mobick.info:40009`
 * Explorer: `https://blockchain.mobick.info/`
+* KRW fiat source: `KRW-BMB` (Mobick ticker API)
 * Watch-only import and PSBT broadcast flow enabled by default
 
 ## Android Screenshots
@@ -102,6 +108,17 @@ Open the iOS workspace under `ios/`. Once the project loads, select the main app
 ```bash
 npm run test
 ```
+
+## Google Play Release Build
+
+```bash
+cd android
+JAVA_HOME=$(/usr/libexec/java_home -v 21) ./gradlew bundleRelease
+```
+
+Expected output:
+
+* `android/app/build/outputs/bundle/release/app-release.aab`
 
 
 ## LICENSE

@@ -11,6 +11,7 @@ const LAST_UPDATED = 'LAST_UPDATED';
 export const GROUP_IO_ISHMAEL = 'group.io.hogusea.ishmael';
 export const GROUP_IO_BLUEWALLET = GROUP_IO_ISHMAEL;
 const BTC_PREFIX = 'BTC_';
+const RATE_SOURCE_PREFIX = 'SOURCE_';
 
 export interface CurrencyRate {
   LastUpdated: Date | null;
@@ -18,7 +19,7 @@ export interface CurrencyRate {
 }
 
 interface ExchangeRates {
-  [key: string]: number | boolean | undefined;
+  [key: string]: number | boolean | string | undefined;
   LAST_UPDATED_ERROR: boolean;
 }
 
@@ -71,8 +72,12 @@ async function updateExchangeRate(): Promise<void> {
   }
   lastTimeUpdateExchangeRateWasCalled = Date.now();
 
+  const exchangeRateKey = BTC_PREFIX + preferredFiatCurrency.endPointKey;
+  const exchangeRateSourceKey = RATE_SOURCE_PREFIX + preferredFiatCurrency.endPointKey;
+  const cachedRateSource = exchangeRates[exchangeRateSourceKey];
+  const isCachedRateSourceCurrent = cachedRateSource === preferredFiatCurrency.source;
   const lastUpdated = exchangeRates[LAST_UPDATED] as number | undefined;
-  if (lastUpdated && Date.now() - lastUpdated <= 30 * 60 * 1000) {
+  if (lastUpdated && Date.now() - lastUpdated <= 30 * 60 * 1000 && isCachedRateSourceCurrent) {
     // not updating too often
     return;
   }
@@ -81,7 +86,8 @@ async function updateExchangeRate(): Promise<void> {
   try {
     const rate = await getFiatRate(preferredFiatCurrency.endPointKey);
     exchangeRates[LAST_UPDATED] = Date.now();
-    exchangeRates[BTC_PREFIX + preferredFiatCurrency.endPointKey] = rate;
+    exchangeRates[exchangeRateKey] = rate;
+    exchangeRates[exchangeRateSourceKey] = preferredFiatCurrency.source;
     exchangeRates.LAST_UPDATED_ERROR = false;
 
     try {
@@ -246,7 +252,9 @@ async function isRateOutdated(): Promise<boolean> {
     } else {
       rate = {};
     }
-    return rate.LAST_UPDATED_ERROR || Date.now() - (rate[LAST_UPDATED] || 0) >= 31 * 60 * 1000;
+    const exchangeRateSourceKey = RATE_SOURCE_PREFIX + preferredFiatCurrency.endPointKey;
+    const isCachedRateSourceCurrent = rate[exchangeRateSourceKey] === preferredFiatCurrency.source;
+    return rate.LAST_UPDATED_ERROR || !isCachedRateSourceCurrent || Date.now() - (rate[LAST_UPDATED] || 0) >= 31 * 60 * 1000;
   } catch {
     return true;
   }

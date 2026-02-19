@@ -22,6 +22,7 @@ import { useSettings } from '../../hooks/context/useSettings';
 import SafeAreaScrollView from '../../components/SafeAreaScrollView';
 import { BlueSpacing20 } from '../../components/BlueSpacing';
 import { BlueLoading } from '../../components/BlueLoading';
+import { sanitizeBlockExplorerUrl } from '../../models/blockExplorer';
 
 const actionKeys = {
   CopyToClipboard: 'copyToClipboard',
@@ -157,32 +158,21 @@ const TransactionDetails = () => {
   }, [saveTransactionDetails]);
 
   const handleOnOpenTransactionOnBlockExplorerTapped = () => {
-    const url = `${selectedBlockExplorer.url}/tx/${tx?.hash}`;
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
-          Linking.openURL(url).catch(e => {
-            console.log('openURL failed in handleOnOpenTransactionOnBlockExplorerTapped');
-            console.log(e.message);
-            triggerHapticFeedback(HapticFeedbackTypes.NotificationError);
-            presentAlert({ message: e.message });
-          });
-        } else {
-          console.log('canOpenURL supported is false in handleOnOpenTransactionOnBlockExplorerTapped');
-          triggerHapticFeedback(HapticFeedbackTypes.NotificationError);
-          presentAlert({ message: loc.transactions.open_url_error });
-        }
-      })
-      .catch(e => {
-        console.log('canOpenURL failed in handleOnOpenTransactionOnBlockExplorerTapped');
-        console.log(e.message);
-        triggerHapticFeedback(HapticFeedbackTypes.NotificationError);
-        presentAlert({ message: e.message });
-      });
+    const explorerBase = sanitizeBlockExplorerUrl(selectedBlockExplorer.url);
+    const txHash = tx?.hash ?? hash;
+    const url = `${explorerBase}/tx/${txHash}`;
+    Linking.openURL(url).catch(e => {
+      console.log('openURL failed in handleOnOpenTransactionOnBlockExplorerTapped');
+      console.log(e.message);
+      triggerHapticFeedback(HapticFeedbackTypes.NotificationError);
+      presentAlert({ message: loc.transactions.open_url_error });
+    });
   };
 
   const handleCopyPress = (stringToCopy: string) => {
-    Clipboard.setString(stringToCopy !== actionKeys.CopyToClipboard ? stringToCopy : `${selectedBlockExplorer.url}/tx/${tx?.hash}`);
+    const explorerBase = sanitizeBlockExplorerUrl(selectedBlockExplorer.url);
+    const txHash = tx?.hash ?? hash;
+    Clipboard.setString(stringToCopy !== actionKeys.CopyToClipboard ? stringToCopy : `${explorerBase}/tx/${txHash}`);
   };
 
   if (isLoading || !tx) {

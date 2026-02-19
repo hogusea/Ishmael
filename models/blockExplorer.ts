@@ -20,6 +20,22 @@ export const normalizeUrl = (url: string): string => {
   return url.replace(/\/+$/, '');
 };
 
+export const sanitizeBlockExplorerUrl = (rawUrl: string): string => {
+  const fallback = BLOCK_EXPLORERS.default.url;
+  const trimmed = String(rawUrl || '').trim();
+  if (!trimmed) return fallback;
+
+  const withScheme = /^(https?:\/\/)/i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+  try {
+    const parsed = new URL(withScheme);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return fallback;
+    return normalizeUrl(parsed.toString());
+  } catch {
+    return fallback;
+  }
+};
+
 export const isValidUrl = (url: string): boolean => {
   const pattern = /^(https?:\/\/)/;
   return pattern.test(url);
@@ -48,7 +64,7 @@ const BLOCK_EXPLORER_STORAGE_KEY = 'blockExplorer';
 
 export const saveBlockExplorer = async (url: string): Promise<boolean> => {
   try {
-    await DefaultPreference.set(BLOCK_EXPLORER_STORAGE_KEY, url);
+    await DefaultPreference.set(BLOCK_EXPLORER_STORAGE_KEY, sanitizeBlockExplorerUrl(url));
     return true;
   } catch (error) {
     console.error('Error saving block explorer:', error);
@@ -69,7 +85,7 @@ export const removeBlockExplorer = async (): Promise<boolean> => {
 export const getBlockExplorerUrl = async (): Promise<string> => {
   try {
     const url = (await DefaultPreference.get(BLOCK_EXPLORER_STORAGE_KEY)) as string | null;
-    return url ?? BLOCK_EXPLORERS.default.url;
+    return sanitizeBlockExplorerUrl(url ?? BLOCK_EXPLORERS.default.url);
   } catch (error) {
     console.error('Error getting block explorer:', error);
     return BLOCK_EXPLORERS.default.url;

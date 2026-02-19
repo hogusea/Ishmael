@@ -12,6 +12,7 @@ export const FiatUnitSource = {
   coinpaprika: 'coinpaprika',
   Bitstamp: 'Bitstamp',
   BNR: 'BNR',
+  Mobick: 'Mobick',
 } as const;
 
 const handleError = (source: string, ticker: string, error: Error) => {
@@ -77,6 +78,10 @@ interface CoinpaprikaResponse {
       price: number;
     };
   };
+}
+
+interface MobickTickerResponse {
+  last: string | number;
 }
 
 const RateExtractors = {
@@ -210,6 +215,21 @@ const RateExtractors = {
       return undefined as never;
     }
   },
+
+  Mobick: async (ticker: string): Promise<number> => {
+    try {
+      const pair = `${ticker.toUpperCase()}-BMB`;
+      const json = (await fetchRate(
+        `https://mobickwallet.dobs.co.kr/api/v1/ticker/?currency_pair=${pair}&forex=USD`,
+      )) as MobickTickerResponse;
+      const rate = Number(json?.last);
+      if (!(rate >= 0)) throw new Error('Invalid data received');
+      return rate;
+    } catch (error: any) {
+      handleError('Mobick', ticker, error);
+      return undefined as never;
+    }
+  },
 } as const;
 
 export type TFiatUnit = {
@@ -217,7 +237,7 @@ export type TFiatUnit = {
   symbol: string;
   locale: string;
   country: string;
-  source: 'Coinbase' | 'CoinDesk' | 'Yadio' | 'Exir' | 'coinpaprika' | 'Bitstamp' | 'Kraken';
+  source: keyof typeof FiatUnitSource;
 };
 
 export type TFiatUnits = {
