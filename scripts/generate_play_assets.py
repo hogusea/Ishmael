@@ -5,7 +5,9 @@ Generate Google Play listing assets for Ishmael (ko-KR).
 Outputs:
 - fastlane/metadata/android/ko-KR/images/icon.png (512x512)
 - fastlane/metadata/android/ko-KR/images/featureGraphic.png (1024x500)
-- fastlane/metadata/android/ko-KR/images/phoneScreenshots/*.png (1080x1920)
+- fastlane/metadata/android/ko-KR/images/phoneScreenshots/*.png
+- fastlane/metadata/android/ko-KR/images/sevenInchScreenshots/*.png
+- fastlane/metadata/android/ko-KR/images/tenInchScreenshots/*.png
 """
 
 from __future__ import annotations
@@ -18,6 +20,8 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_BASE = ROOT / "fastlane/metadata/android/ko-KR/images"
 SCREEN_DIR = TARGET_BASE / "phoneScreenshots"
+SEVEN_INCH_DIR = TARGET_BASE / "sevenInchScreenshots"
+TEN_INCH_DIR = TARGET_BASE / "tenInchScreenshots"
 
 ICON_SRC = ROOT / "assets/branding/ishmael-logo-1024.png"
 SCREEN_SOURCES = [
@@ -117,8 +121,7 @@ def generate_feature_graphic() -> None:
     canvas.convert("RGB").save(TARGET_BASE / "featureGraphic.png", format="PNG")
 
 
-def generate_phone_screenshots() -> None:
-    target_size = (1080, 1920)
+def generate_screenshot_set(target_dir: Path, target_size: tuple[int, int]) -> None:
     target_ratio = target_size[0] / target_size[1]
 
     for src_relative, output_name in SCREEN_SOURCES:
@@ -126,14 +129,17 @@ def generate_phone_screenshots() -> None:
         image = Image.open(src).convert("RGB")
         cropped = center_crop_to_ratio(image, target_ratio)
         out = cropped.resize(target_size, Image.Resampling.LANCZOS)
-        out.save(SCREEN_DIR / output_name, format="PNG")
+        out.save(target_dir / output_name, format="PNG")
 
 
 def main() -> None:
-    ensure_dirs([TARGET_BASE, SCREEN_DIR])
+    ensure_dirs([TARGET_BASE, SCREEN_DIR, SEVEN_INCH_DIR, TEN_INCH_DIR])
     generate_icon()
     generate_feature_graphic()
-    generate_phone_screenshots()
+    # Keep 9:16 and >=1080px for Play large-screen screenshot recommendations.
+    generate_screenshot_set(SCREEN_DIR, (1080, 1920))
+    generate_screenshot_set(SEVEN_INCH_DIR, (1080, 1920))
+    generate_screenshot_set(TEN_INCH_DIR, (1080, 1920))
     print(f"Generated assets in: {TARGET_BASE}")
 
 
