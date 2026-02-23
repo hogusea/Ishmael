@@ -1,0 +1,51 @@
+name: Android Debug Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master-sync
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Restore google-services.json from secret
+        run: |
+          if [ -z "${{ secrets.ANDROID_GOOGLE_SERVICES_JSON_B64 }}" ]; then
+            echo "Missing repository secret: ANDROID_GOOGLE_SERVICES_JSON_B64" >&2
+            exit 1
+          fi
+          mkdir -p android/app
+          echo "${{ secrets.ANDROID_GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > android/app/google-services.json
+
+      - name: Build debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --stacktrace --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ishmael-android-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
